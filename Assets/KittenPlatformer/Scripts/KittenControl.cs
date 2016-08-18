@@ -13,6 +13,10 @@ public class KittenControl : MonoBehaviour
     public float maxSpeed;
     public float moveForce;
     public float idleSpeed;
+    public int livesRemaining;
+
+    public Renderer[] lifeIcons;
+    public float lowestPosition;
 	
 	private bool jump = false;
 	private Rigidbody2D m_rigidBody;
@@ -22,7 +26,8 @@ public class KittenControl : MonoBehaviour
 	private Bounds groundDetectionBox;
 	private Animator animator;
     private bool facingRight = true;
-    public float lowestPosition;
+    private SpriteRenderer sprite;
+    private bool invincible;
 
     bool gameOver = false;
 
@@ -31,7 +36,12 @@ public class KittenControl : MonoBehaviour
 		m_rigidBody = GetComponent<Rigidbody2D>();
 		animator = GetComponent<Animator>();
 		overlappingColliders = new Collider2D[8];
+        sprite = GetComponent<SpriteRenderer>();
+
+        livesRemaining = lifeIcons.Length;
 	}
+
+    
     
 	IEnumerator Start()
 	{
@@ -62,7 +72,9 @@ public class KittenControl : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-
+        if( invincible ){
+            sprite.enabled = ( Mathf.FloorToInt( Time.time * 8f ) & 1 )!=0;
+        }
         if( gameOver ){
             return;
         }
@@ -112,11 +124,13 @@ public class KittenControl : MonoBehaviour
 		}
 		
 	}
+
+    
 	
 	void GroundCheck()
 	{
-		Bounds box = groundDetection.bounds; 
-		int numColliders = Physics2D.OverlapAreaNonAlloc( box.min, box.max, overlappingColliders );
+		Bounds box = groundDetection.bounds;
+        int numColliders = Physics2D.OverlapAreaNonAlloc( box.min, box.max, overlappingColliders );
 		isTouchingGround = false;
 		
 		for( int i=0; i<numColliders; i++ ){
@@ -134,16 +148,34 @@ public class KittenControl : MonoBehaviour
         facingRight = !facingRight;
 
         // Multiply the player's x local scale by -1.
-        Vector3 theScale = transform.localScale;
-        theScale.x *= -1;
-        transform.localScale = theScale;
+        //Vector3 theScale = transform.localScale;
+        //theScale.x *= -1;
+        //transform.localScale = theScale;
+        sprite.flipX = !facingRight;
+    }
+
+    public void AddLife(){
+        livesRemaining++;
+        UpdateLives();
+    }
+
+    public void RemoveLife(){
+        if( invincible ) {
+            return;
+        }
+        livesRemaining--;
+        Debug.Log(livesRemaining);
+        if( livesRemaining > 0 ){
+            MakeInvincible(2f);
+        }
+        UpdateLives();
     }
 
     public void GameOver(){
         StartCoroutine(_GameOver());
     }
 
-	public IEnumerator _GameOver()
+    IEnumerator _GameOver()
 	{
         if( gameOver ) yield break;
     
@@ -160,6 +192,38 @@ public class KittenControl : MonoBehaviour
         Destroy(this);
         SceneManager.LoadScene( SceneManager.GetActiveScene().buildIndex );
 	}
+
+    public void MakeInvincible(float seconds){
+        if( invincible ) {
+            return;
+        }
+        StartCoroutine( _MakeInvincible(seconds) );
+    }
+
+    IEnumerator _MakeInvincible(float seconds){
+        invincible = true;
+        yield return new WaitForSeconds( seconds );
+        sprite.enabled = true;
+        invincible = false;
+    }
+
+
+    void UpdateLives(){
+        if( livesRemaining > lifeIcons.Length ){
+            livesRemaining = lifeIcons.Length;
+        }
+        if( livesRemaining < 0 ){
+            livesRemaining = 0;
+            GameOver();
+        }
+        for( int i=0; i<lifeIcons.Length; i++ ){
+            var life = lifeIcons[i];
+            life.enabled = ( livesRemaining > i );
+
+        }
+    }
+
+
 
 
 }
