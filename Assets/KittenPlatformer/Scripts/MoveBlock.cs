@@ -11,7 +11,7 @@ public class MoveBlock : MonoBehaviour {
 
 
 	void Start () {
-	    
+	    body.isKinematic = true;
 	}
 	
 	void FixedUpdate () {

@@ -22,6 +22,7 @@ GameObject:
   - 212: {fileID: 212000013194674782}
   - 58: {fileID: 58000012308584906}
   - 50: {fileID: 50000014177168024}
+  - 114: {fileID: 114000012913090474}
   m_Layer: 0
   m_Name: Balloon
   m_TagString: Untagged
@@ -73,6 +74,19 @@ CircleCollider2D:
   m_Offset: {x: -0.07, y: 0.36}
   serializedVersion: 2
   m_Radius: 0.4
+--- !u!114 &114000012913090474
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012716666012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2be8d550963844afb862c7bf636b4746, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 1000011264204296, guid: 47af2204a7a7f476b8cfb678022ee2c8, type: 2}
+  numberToSpawn: 1
 --- !u!212 &212000013194674782
 SpriteRenderer:
   m_ObjectHideFlags: 1

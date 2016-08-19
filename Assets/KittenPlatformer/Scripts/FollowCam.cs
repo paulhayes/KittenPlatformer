@@ -20,4 +20,10 @@ public class FollowCam : MonoBehaviour {
 		transform.Translate( targetPos.x - transform.position.x, targetPos.y - transform.position.y, 0 );
 		
 	}
+
+    public void ChangeTarget( Transform newTarget ){
+        target = newTarget;
+    }
 }
+
+

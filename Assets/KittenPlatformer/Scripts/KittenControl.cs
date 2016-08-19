@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using UnityEngine.Events;
 
 public class KittenControl : MonoBehaviour 
 {
@@ -14,10 +15,18 @@ public class KittenControl : MonoBehaviour
     public float moveForce;
     public float idleSpeed;
     public int livesRemaining;
-
+    public int score;
     public Renderer[] lifeIcons;
     public float lowestPosition;
-	
+
+    public IntEvent OnScoreIncrease;
+    public IntEvent OnLifeRemoved;
+
+    [System.Serializable]
+    public class IntEvent : UnityEvent<int> {
+        
+    }
+
 	private bool jump = false;
 	private Rigidbody2D m_rigidBody;
 	
@@ -154,6 +163,14 @@ public class KittenControl : MonoBehaviour
         sprite.flipX = !facingRight;
     }
 
+    public void IncreaseScore(int value){
+        score += value;
+        if( score < 0 ){
+            score=0;
+        }
+        OnScoreIncrease.Invoke(score);
+    }
+
     public void AddLife(){
         livesRemaining++;
         UpdateLives();
@@ -212,7 +229,7 @@ public class KittenControl : MonoBehaviour
         if( livesRemaining > lifeIcons.Length ){
             livesRemaining = lifeIcons.Length;
         }
-        if( livesRemaining < 0 ){
+        if( livesRemaining <= 0 ){
             livesRemaining = 0;
             GameOver();
         }
